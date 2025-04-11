@@ -1,36 +1,50 @@
 import { ClearCartIcon, CartIcon } from "./Icons";
 import { useId } from "react";
+import { useCart } from "../context/cart";
 import "./Cart.css";
 
+
+function CartItem ({ thumbnail, title, price, quantity, addToCart }) {
+    return (
+        <li>
+            <img
+              src={thumbnail}
+              alt={title}
+            />
+            <div>
+              <h3>{title}</h3> - ${price}
+            </div>
+
+            <footer>
+              <small>Qty: {quantity}</small>
+              <button onClick={addToCart}>+</button>
+            </footer>
+          </li>
+    )
+}
 export function Cart() {
   const cartCheckboxId = useId();
+  const {cart, clearCart, addToCart} = useCart();
 
   return (
     <>
-      <label className="cart-button" htmlFor="cart">
+      <label className="cart-button" htmlFor={cartCheckboxId}>
         <CartIcon />
       </label>
       <input id={cartCheckboxId} type="checkbox" hidden />
 
       <aside className="cart">
         <ul>
-          <li>
-            <img
-              src="https://cdn.dummyjson.com/products/images/fragrances/Dolce%20Shine%20Eau%20de/thumbnail.png"
-              alt="Dolce Shine perfume"
+          {cart.map(product => (
+            <CartItem
+                key={product.id}
+                addToCart = {() => addToCart(product)}
+                {...product}
             />
-            <div>
-              <h3>Dolce Shine perfume</h3> - $69.99
-            </div>
-
-            <footer>
-              <small>Qty: 1</small>
-              <button>+</button>
-            </footer>
-          </li>
+          ))}
         </ul>
 
-        <button>
+        <button onClick={clearCart}>
           <ClearCartIcon />
         </button>
       </aside>
